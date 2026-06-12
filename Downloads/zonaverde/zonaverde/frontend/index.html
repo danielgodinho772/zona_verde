@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ZonaVerde – Painel Municipal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside>
+    <div class="logo">
+        <h1>🌿 ZonaVerde</h1>
+        <span>Painel Municipal</span>
+    </div>
+    <nav>
+        <button class="active" onclick="showPage('dashboard')"><span class="icon">📊</span> Dashboard</button>
+        <button onclick="showPage('espacos')"><span class="icon">🏟️</span> Espaços</button>
+        <button onclick="showPage('eventos')"><span class="icon">📅</span> Eventos</button>
+        <button onclick="showPage('reportes')"><span class="icon">🔧</span> Reportes</button>
+        <button onclick="showPage('usuarios')"><span class="icon">👤</span> Usuários</button>
+    </nav>
+</aside>
+
+<main>
+
+    <div id="page-dashboard" class="page active">
+        <h2>Visão Geral</h2>
+        <div class="cards" id="dash-cards">
+            <div class="card"><div class="label">Espaços cadastrados</div><div class="value" id="dash-espacos">–</div></div>
+            <div class="card"><div class="label">Eventos registrados</div><div class="value" id="dash-eventos">–</div></div>
+            <div class="card"><div class="label">Reportes abertos</div><div class="value" id="dash-reportes">–</div></div>
+            <div class="card"><div class="label">Usuários</div><div class="value" id="dash-usuarios">–</div></div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Reportes por prioridade</h3></div>
+            <table>
+                <thead><tr><th>Descrição</th><th>Tipo</th><th>Confirmações</th><th>Prioridade</th></tr></thead>
+                <tbody id="dash-reportes-table"><tr><td colspan="4" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Últimos eventos</h3></div>
+            <table>
+                <thead><tr><th>Nome</th><th>Status</th><th>Início</th></tr></thead>
+                <tbody id="dash-eventos-table"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="page-espacos" class="page">
+        <h2>Espaços Públicos</h2>
+
+        <div class="form-section">
+            <h3>Cadastrar novo espaço</h3>
+            <div class="form-grid">
+                <div><label>Nome</label><input id="esp-nome" placeholder="Ex: Praça das Flores"/></div>
+                <div><label>Endereço</label><input id="esp-end" placeholder="Rua, número, bairro"/></div>
+                <div>
+                    <label>Tipo</label>
+                    <select id="esp-tipo">
+                        <option value="PRACA">Praça</option>
+                        <option value="QUADRA">Quadra</option>
+                        <option value="PARQUE">Parque</option>
+                        <option value="CENTRO_COMUNITARIO">Centro Comunitário</option>
+                    </select>
+                </div>
+                <div><label>Capacidade estimada</label><input id="esp-cap" type="number" placeholder="Ex: 200"/></div>
+                <div><label>Latitude</label><input id="esp-lat" type="number" step="any" placeholder="-23.4218"/></div>
+                <div><label>Longitude</label><input id="esp-lng" type="number" step="any" placeholder="-51.9383"/></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="criarEspaco()">Cadastrar espaço</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Espaços cadastrados</h3><button class="btn btn-sm btn-success" onclick="carregarEspacos()">↻ Atualizar</button></div>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Endereço</th><th>Capacidade</th></tr></thead>
+                <tbody id="espacos-table"><tr><td colspan="4" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="page-eventos" class="page">
+        <h2>Eventos</h2>
+
+        <div class="form-section">
+            <h3>Propor novo evento</h3>
+            <div class="form-grid">
+                <div><label>Nome do evento</label><input id="ev-nome" placeholder="Ex: Feira de Artesanato"/></div>
+                <div><label>ID do Espaço</label><input id="ev-espaco" type="number" placeholder="ID do espaço público"/></div>
+                <div><label>ID do Proponente (Usuário)</label><input id="ev-prop" type="number" placeholder="ID do usuário"/></div>
+                <div><label>Descrição</label><input id="ev-desc" placeholder="Breve descrição do evento"/></div>
+                <div><label>Data/hora início</label><input id="ev-inicio" type="datetime-local"/></div>
+                <div><label>Data/hora fim</label><input id="ev-fim" type="datetime-local"/></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="criarEvento()">Propor evento</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Todos os eventos</h3><button class="btn btn-sm btn-success" onclick="carregarEventos()">↻ Atualizar</button></div>
+            <table>
+                <thead><tr><th>Nome</th><th>Status</th><th>Início</th><th>Fim</th><th>Ações</th></tr></thead>
+                <tbody id="eventos-table"><tr><td colspan="5" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="page-reportes" class="page">
+        <h2>Reportes de Manutenção</h2>
+
+        <div class="form-section">
+            <h3>Registrar reporte</h3>
+            <div class="form-grid">
+                <div><label>Descrição</label><input id="rep-desc" placeholder="Ex: Lâmpada queimada na entrada"/></div>
+                <div>
+                    <label>Tipo</label>
+                    <select id="rep-tipo">
+                        <option value="ILUMINACAO">Iluminação</option>
+                        <option value="LIXO">Lixo</option>
+                        <option value="EQUIPAMENTO">Equipamento</option>
+                        <option value="OUTRO">Outro</option>
+                    </select>
+                </div>
+                <div><label>ID do Espaço</label><input id="rep-espaco" type="number" placeholder="ID do espaço público"/></div>
+                <div><label>ID do Autor (Usuário)</label><input id="rep-autor" type="number" placeholder="ID do usuário"/></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="criarReporte()">Registrar reporte</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Reportes por prioridade</h3><button class="btn btn-sm btn-success" onclick="carregarReportes()">↻ Atualizar</button></div>
+            <table>
+                <thead><tr><th>Descrição</th><th>Tipo</th><th>Data</th><th>Confirmações</th><th>Prioridade</th><th>Ação</th></tr></thead>
+                <tbody id="reportes-table"><tr><td colspan="6" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="page-usuarios" class="page">
+        <h2>Usuários</h2>
+
+        <div class="form-section">
+            <h3>Cadastrar usuário</h3>
+            <div class="form-grid">
+                <div><label>Nome</label><input id="usr-nome" placeholder="Nome completo"/></div>
+                <div><label>E-mail</label><input id="usr-email" type="email" placeholder="email@exemplo.com"/></div>
+                <div>
+                    <label>Tipo</label>
+                    <select id="usr-tipo">
+                        <option value="CIDADAO">Cidadão</option>
+                        <option value="GESTOR">Gestor</option>
+                    </select>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="criarUsuario()">Cadastrar</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-header"><h3>Usuários cadastrados</h3><button class="btn btn-sm btn-success" onclick="carregarUsuarios()">↻ Atualizar</button></div>
+            <table>
+                <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Tipo</th></tr></thead>
+                <tbody id="usuarios-table"><tr><td colspan="4" class="loading">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
